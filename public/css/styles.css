@@ -1,0 +1,166 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+}
+
+.header img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.info {
+  max-width: 940px;
+  margin: 0 auto;
+}
+
+p {
+  margin-bottom: 25px;
+  text-align: justify;
+  line-height: 1.5;
+  color: #1d1d1d;
+}
+
+.postular h1, .postular p{
+  text-align: center;
+}
+
+h1 {
+  color: #1F696D;
+  margin: 25px 0;
+}
+
+iframe {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.btn-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.btn-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 25px;
+}
+
+.btn-card a {
+  display: inline-block;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  background-color: #1F696D;
+  border-radius: 10px;
+  width: 193px;
+  height: 28px;
+  text-align: center;
+  line-height: 28px;
+  margin-top: 10px;
+}
+
+.btn-card img {
+  max-height: 97px;
+  height: auto;
+  width: auto;
+}
+
+@media only screen and (min-width: 426px) {
+  .video {
+    width: 500px;
+    height: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 25px;
+  }
+
+  .video iframe,
+  .video object,
+  .video embed {
+    width: 500px;
+    height: 300px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .video {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    margin-bottom: 25px;
+  }
+
+  .video iframe,
+  .video object,
+  .video embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.postular form{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 40px;
+}
+
+.postular{
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.postular input, .postular select{
+  margin-bottom: 25px;
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid #1F696D;
+  text-align: center;
+  font-size: medium;
+}
+
+.postular input[type="file"]{
+  margin-bottom: 25px;
+  height: 30px;
+  border-radius: 5px;
+  text-align: center;
+  font-size: medium;
+  border: none;
+}
+
+.postular label{
+  margin-bottom: 3px;
+}
+
+#enviar{
+  background-color: #1F696D;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  width: 200px;
+  height: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: medium;
+  cursor: pointer;
+}
+
+.footer{
+  background-color: #ededed;
+  text-align: center;
+  padding: 10px 0;
+}
+
+.footer p{
+  text-align: center;
+}

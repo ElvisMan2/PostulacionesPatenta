@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programa Patenta</title>
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="icon" href="./images/icon.png">
+    <script src="./js/validacionForm.js"></script>
+</head>
+<body>
+    <header class="header">
+        <figure>
+            <img src="./images/banner.png" alt="banner">
+        </figure>
+    </header>
+    <main class="postular">
+        <h1>Formulario de participación</h1>
+        <p>Completa la información solicitada y adjunta los documentos de postulación.</p>
+        <form action="/submit" method="POST" enctype="multipart/form-data">
+            <label>Tipo de participante</label>
+            <select name="tipo_participante" required>
+                <option value="Empresa">Empresa</option>
+                <option value="Centros académicos y/o investigación">Centros académicos y/o investigación</option>
+                <option value="Inventor(es) independiente(s)">Inventor(es) independiente(s)</option>
+            </select>
+            <label>Nombre de la Institución o Empresa</label>
+            <input type="text" name="nombre_institucion" required>
+            <label>Título de la Invención</label>
+            <input type="text" name="titulo_invencion">
+            <label>Sector Tecnológico</label>
+            <select name="sector_tecnologico" required>
+                <option value="Agropecuario y agroindustria">Agropecuario y agroindustria</option>
+                <option value="Vivienda y saneamiento">Vivienda y saneamiento</option>
+                <option value="Energía y transporte">Energía y transporte</option>
+                <option value="Biotecnología y medicina">Biotecnología y medicina</option>
+                <option value="Minería y metalurgia">Minería y metalurgia</option>
+                <option value="Medio ambiente">Medio ambiente</option>
+                <option value="Telecomunicaciones y electrónica">Telecomunicaciones y electrónica</option>
+                <option value="Utilitarios y Otros">Utilitarios y Otros</option>
+            </select>
+            <label>Apellidos del representante</label>
+            <input type="text" name="apellidos_representante">
+            <label>Nombres del representante</label>
+            <input type="text" name="nombres_representante">
+            <label>DNI del representante</label>
+            <input type="text" name="dni_representante">
+            <label>Correo electrónico</label>
+            <input type="email" name="correo_electronico">
+            <label>Región</label>
+            <select name="region" required>
+                <option value="Amazonas">Amazonas</option>
+                <option value="Áncash">Áncash</option>
+                <option value="Apurímac">Apurímac</option>
+                <option value="Arequipa">Arequipa</option>
+                <option value="Ayacucho">Ayacucho</option>
+                <option value="Cajamarca">Cajamarca</option>
+                <option value="Callao">Callao</option>
+                <option value="Cusco">Cusco</option>
+                <option value="Huancavelica">Huancavelica</option>
+                <option value="Huánuco">Huánuco</option>
+                <option value="Ica">Ica</option>
+                <option value="Junín">Junín</option>
+                <option value="La Libertad">La Libertad</option>
+                <option value="Lambayeque">Lambayeque</option>
+                <option value="Lima">Lima</option>
+                <option value="Loreto">Loreto</option>
+                <option value="Madre de Dios">Madre de Dios</option>
+                <option value="Moquegua">Moquegua</option>
+                <option value="Pasco">Pasco</option>
+                <option value="Piura">Piura</option>
+                <option value="Puno">Puno</option>
+                <option value="San Martín">San Martín</option>
+                <option value="Tacna">Tacna</option>
+                <option value="Tumbes">Tumbes</option>
+                <option value="Ucayali">Ucayali</option>
+            </select>
+            <label>Ficha del postulante</label>
+            <input type="file" name="ficha_postulante">
+            <label>Ficha de la invención</label>
+            <input type="file" name="ficha_invencion">
+            <label>Acta de compromiso</label>
+            <input type="file" name="acta_compromiso">
+            <button id="enviar" type="submit">Enviar</button>
+        </form>
+    </main>
+</body>
+</html>
