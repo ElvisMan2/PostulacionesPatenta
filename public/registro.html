@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>registro de usuarios</title>
+</head>
+<body>
+    <form>
+        <label for="usuario">Usuario</label>
+        <input type="text" name="usuario" id="usuario"><br>
+        <label for="contrasena">Contraseña</label>
+        <input type="password" name="contrasena" id="contrasena"><br>
+        <label for="nombre_completo">Nombre Completo</label>
+        <input type="text" name="nombre_completo" id="nombre_completo"><br>
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email"><br>
+        <button type="submit">Registrar</button>
+    </form>
+</body>
+</html>
+<script>
+    const form = document.querySelector('form');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const usuario = document.querySelector('#usuario').value;
+        const contrasena = document.querySelector('#contrasena').value;
+        const nombre_completo = document.querySelector('#nombre_completo').value;
+        const email = document.querySelector('#email').value;
+        const response = await fetch('./registro', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ usuario, contrasena, nombre_completo, email })
+        });
+        const data = await response.json();
+        if (data.error) {
+            alert(data.error);
+        } else {
+            alert('Registro exitoso');
+        }
+    });
+</script>

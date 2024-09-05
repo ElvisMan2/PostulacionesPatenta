@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Postulaciones</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lista de Postulaciones</h1>
+    <table id="tabla-postulaciones">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tipo Participante</th>
+                <th>Nombre Institución</th>
+                <th>Título Invención</th>
+                <th>Sector Tecnológico</th>
+                <th>Apellidos Representante</th>
+                <th>Nombres Representante</th>
+                <th>DNI Representante</th>
+                <th>Correo Electrónico</th>
+                <th>Región</th>
+                <th>Ficha Postulante</th>
+                <th>Ficha Invención</th>
+                <th>Acta Compromiso</th>
+                <th>Fecha de Creación</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Aquí se insertarán los datos dinámicamente -->
+        </tbody>
+    </table>
+
+    <script>
+        // Obtener el token del localStorage
+        const token = localStorage.getItem('token');
+
+        // Verificar si el token existe
+        if (!token) {
+            alert('No estás autenticado. Por favor, inicia sesión.');
+            window.location.href = 'login.html';  // Redirigir al inicio de sesión
+        } else {
+            // Función para obtener las postulaciones
+            function obtenerPostulaciones() {
+                fetch('/postulaciones', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        llenarTabla(data.data);
+                    } else {
+                        alert('Error: ' + data.message);
+                        // Si el token es inválido o expiró, redirigir al login
+                        if (data.message === 'Token inválido' || data.message === 'Token no proporcionado') {
+                            window.location.href = 'login.html';
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al obtener las postulaciones:', error);
+                });
+            }
+
+            // Llamar a la función para obtener los datos
+            obtenerPostulaciones();
+        }
+
+        // Función para llenar la tabla (como antes)
+        function llenarTabla(postulaciones) {
+            const tbody = document.querySelector('#tabla-postulaciones tbody');
+            tbody.innerHTML = '';  // Limpiar el contenido existente
+
+            postulaciones.forEach(postulacion => {
+                const fila = document.createElement('tr');
+
+                fila.innerHTML = `
+                    <td>${postulacion.id}</td>
+                    <td>${postulacion.tipo_participante}</td>
+                    <td>${postulacion.nombre_institucion}</td>
+                    <td>${postulacion.titulo_invencion}</td>
+                    <td>${postulacion.sector_tecnologico}</td>
+                    <td>${postulacion.apellidos_representante}</td>
+                    <td>${postulacion.nombres_representante}</td>
+                    <td>${postulacion.dni_representante}</td>
+                    <td>${postulacion.correo_electronico}</td>
+                    <td>${postulacion.region}</td>
+                    <td>${postulacion.ficha_postulante ? `<a href="/${postulacion.ficha_postulante}" target="_blank">Ver Ficha</a>` : 'No disponible'}</td>
+                    <td>${postulacion.ficha_invencion ? `<a href="/${postulacion.ficha_invencion}" target="_blank">Ver Ficha</a>` : 'No disponible'}</td>
+                    <td>${postulacion.acta_compromiso ? `<a href="/${postulacion.acta_compromiso}" target="_blank">Ver Acta</a>` : 'No disponible'}</td>
+                    <td>${new Date(postulacion.fecha_creacion).toLocaleDateString()}</td>
+                `;
+
+                tbody.appendChild(fila);
+            });
+        }
+
+    </script>
+</body>
+</html>

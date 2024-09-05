@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Inicio de Sesión</title>
+</head>
+<body>
+    <form id="login-form">
+        <label for="usuario">Usuario</label>
+        <input type="text" name="usuario" id="usuario" required><br>
+        <label for="contrasena">Contraseña</label>
+        <input type="password" name="contrasena" id="contrasena" required><br>
+        <button type="submit">Login</button>
+    </form>
+
+    <script>
+        const form = document.querySelector('#login-form');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const usuario = document.querySelector('#usuario').value;
+            const contrasena = document.querySelector('#contrasena').value;
+            try {
+                const response = await fetch('/login', {  // Usa la ruta relativa si estás en el mismo dominio
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ usuario, contrasena })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    // Almacenar el token en localStorage
+                    localStorage.setItem('token', data.token);
+                    alert('Inicio de sesión exitoso');
+                    // Redirigir a la página de postulaciones
+                    window.location.href = 'postulaciones.html';
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Ocurrió un error en el inicio de sesión');
+            }
+        });
+    </script>
+</body>
+</html>
