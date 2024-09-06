@@ -6,6 +6,7 @@ const fs = require('fs');
 
 const https = require('https');
 const http = require('http');  // Para redirigir de HTTP a HTTPS
+const app = express();
 
 
 // Cargar los certificados SSL
@@ -21,17 +22,17 @@ const credentials = {
 
 // Redirigir todo el tráfico HTTP a HTTPS
 http.createServer((req, res) => {
-    res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
-    res.end();
-  }).listen(80);
-  
-  // Crear servidor HTTPS
-  const httpsServer = https.createServer(credentials, app);
-  
-  // Servir la aplicación en HTTPS (puerto 443)
-  httpsServer.listen(443, () => {
-    console.log('Servidor HTTPS corriendo en el puerto 443');
-  });
+  res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+  res.end();
+}).listen(80);
+
+// Crear servidor HTTPS
+const httpsServer = https.createServer(credentials, app);
+
+// Servir la aplicación en HTTPS (puerto 443)
+httpsServer.listen(443, () => {
+  console.log('Servidor HTTPS corriendo en el puerto 443');
+});
 
 
 
@@ -45,7 +46,7 @@ http.createServer((req, res) => {
 
 const jwt = require('jsonwebtoken');
 
-const app = express();
+
 
 const secretKey = '6LdUDjMqAAAAABBnVq8EKW_2tv_xCM4mvrDmxhRV';  // Reemplaza con tu clave secreta de reCAPTCHA
 
@@ -221,10 +222,4 @@ app.post('/submit', upload.fields([
 app.get('/uploads/:file', (req, res) => {
     const file = req.params.file;
     res.sendFile(path.join(__dirname, 'uploads', file));
-});
-
-
-
-app.listen(80, () => {
-    console.log('Servidor escuchando en el puerto 80');
 });
