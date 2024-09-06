@@ -184,6 +184,6 @@ app.get('/uploads/:file', (req, res) => {
 
 
 
-app.listen(3000, () => {
-    console.log('Servidor escuchando en el puerto 3000');
+app.listen(80, () => {
+    console.log('Servidor escuchando en el puerto 80');
 });
