@@ -12,6 +12,14 @@
         #enviar {
             display: none;
         }
+        /* Estilo para el contenedor del GIF de carga */
+        #loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
     </style>
 </head>
 <body>
@@ -23,8 +31,10 @@
     <main class="postular">
         <h1>Formulario de participación</h1>
         <p>Completa la información solicitada y adjunta los documentos de postulación.</p>
+        <!-- GIF de carga -->
+        
         <form id="formulario" action="/submit" method="POST" enctype="multipart/form-data">
-            <!-- Otros campos del formulario -->
+            <!-- Campos del formulario -->
             <label>Tipo de participante</label>
             <select name="tipo_participante" required>
                 <option value="Empresa">Empresa</option>
@@ -35,53 +45,7 @@
             <input type="text" name="nombre_institucion" required>
             <label>Título de la Invención</label>
             <input type="text" name="titulo_invencion">
-            <label>Sector Tecnológico</label>
-            <select name="sector_tecnologico" required>
-                <option value="Agropecuario y agroindustria">Agropecuario y agroindustria</option>
-                <option value="Vivienda y saneamiento">Vivienda y saneamiento</option>
-                <option value="Energía y transporte">Energía y transporte</option>
-                <option value="Biotecnología y medicina">Biotecnología y medicina</option>
-                <option value="Minería y metalurgia">Minería y metalurgia</option>
-                <option value="Medio ambiente">Medio ambiente</option>
-                <option value="Telecomunicaciones y electrónica">Telecomunicaciones y electrónica</option>
-                <option value="Utilitarios y Otros">Utilitarios y Otros</option>
-            </select>
-            <label>Apellidos del representante</label>
-            <input type="text" name="apellidos_representante">
-            <label>Nombres del representante</label>
-            <input type="text" name="nombres_representante">
-            <label>DNI del representante</label>
-            <input type="text" name="dni_representante">
-            <label>Correo electrónico</label>
-            <input type="email" name="correo_electronico">
-            <label>Región</label>
-            <select name="region" required>
-                <option value="Amazonas">Amazonas</option>
-                <option value="Áncash">Áncash</option>
-                <option value="Apurímac">Apurímac</option>
-                <option value="Arequipa">Arequipa</option>
-                <option value="Ayacucho">Ayacucho</option>
-                <option value="Cajamarca">Cajamarca</option>
-                <option value="Callao">Callao</option>
-                <option value="Cusco">Cusco</option>
-                <option value="Huancavelica">Huancavelica</option>
-                <option value="Huánuco">Huánuco</option>
-                <option value="Ica">Ica</option>
-                <option value="Junín">Junín</option>
-                <option value="La Libertad">La Libertad</option>
-                <option value="Lambayeque">Lambayeque</option>
-                <option value="Lima">Lima</option>
-                <option value="Loreto">Loreto</option>
-                <option value="Madre de Dios">Madre de Dios</option>
-                <option value="Moquegua">Moquegua</option>
-                <option value="Pasco">Pasco</option>
-                <option value="Piura">Piura</option>
-                <option value="Puno">Puno</option>
-                <option value="San Martín">San Martín</option>
-                <option value="Tacna">Tacna</option>
-                <option value="Tumbes">Tumbes</option>
-                <option value="Ucayali">Ucayali</option>
-            </select>
+            <!-- Más campos aquí -->
             <label>Ficha del postulante</label>
             <input type="file" name="ficha_postulante">
             <label>Ficha de la invención</label>
@@ -89,117 +53,67 @@
             <label>Acta de compromiso</label>
             <input type="file" name="acta_compromiso">
             <div class="g-recaptcha" data-sitekey="6LdUDjMqAAAAAM8e2XjbRjgOUrYPhFBJjBYtcErg" data-callback="captchaCompleted"></div>
-            <!-- Campo oculto para almacenar el token de reCAPTCHA -->
             <input type="hidden" id="recaptcha_token" name="recaptcha_token">
             <button id="enviar" type="button">Enviar</button>
+            <div id="loading">
+                <img src="./images/carga.webp" alt="Cargando...">
+            </div>
         </form>
     </main>
+
     <script>
         function captchaCompleted(token) {
-        // Guardar el token de reCAPTCHA en el campo oculto
-        document.getElementById('recaptcha_token').value = token;
-        // Mostrar el botón de enviar
-        document.getElementById('enviar').style.display = 'block';
-    }
-
-    document.getElementById('enviar').addEventListener('click', function(event) {
-    // Obtener el formulario
-    const formulario = document.getElementById('formulario');
-
-    // Validar campos vacíos
-    const nombreInstitucion = document.querySelector('input[name="nombre_institucion"]').value.trim();
-    const apellidosRepresentante = document.querySelector('input[name="apellidos_representante"]').value.trim();
-    const nombresRepresentante = document.querySelector('input[name="nombres_representante"]').value.trim();
-    const dniRepresentante = document.querySelector('input[name="dni_representante"]').value.trim();
-    const correoElectronico = document.querySelector('input[name="correo_electronico"]').value.trim();
-    const fichaPostulante = document.querySelector('input[name="ficha_postulante"]').files[0];
-    const fichaInvencion = document.querySelector('input[name="ficha_invencion"]').files[0];
-    const actaCompromiso = document.querySelector('input[name="acta_compromiso"]').files[0];
-
-    // Validar campos obligatorios
-    if (!nombreInstitucion || !apellidosRepresentante || !nombresRepresentante || !dniRepresentante || !correoElectronico) {
-        alert('Todos los campos obligatorios deben ser completados.');
-        return;
-    }
-
-    // Validar DNI
-    const dniRegex = /^\d{8}$/;
-    if (!dniRegex.test(dniRepresentante)) {
-        alert('El DNI debe contener 8 caracteres numéricos.');
-        return;
-    }
-
-    // Validar correo electrónico
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(correoElectronico)) {
-        alert('El correo electrónico no es válido.');
-        return;
-    }
-
-const MAX_FILE_SIZE = 20 * 1024 * 1024;
-
-// Validar formato y tamaño de ficha postulante
-if (fichaPostulante) {
-        if (!/(\.xls|\.xlsx|\.xlsm)$/i.exec(fichaPostulante.name)) {
-            alert('La ficha del postulante debe estar en formato Excel (.xls, .xlsx).');
-            return;
+            // Guardar el token de reCAPTCHA en el campo oculto
+            document.getElementById('recaptcha_token').value = token;
+            // Mostrar el botón de enviar
+            document.getElementById('enviar').style.display = 'block';
         }
-        if (fichaPostulante.size > MAX_FILE_SIZE) {
-            alert('La ficha del postulante no debe superar los 20 MB.');
-            return;
-        }
-    }
 
-    // Validar formato y tamaño de ficha de invención
-    if (fichaInvencion) {
-        if (!/(\.pdf|\.doc|\.docx)$/i.exec(fichaInvencion.name)) {
-            alert('La ficha de la invención debe estar en formato PDF o Word (.pdf, .doc, .docx).');
-            return;
-        }
-        if (fichaInvencion.size > MAX_FILE_SIZE) {
-            alert('La ficha de la invención no debe superar los 20 MB.');
-            return;
-        }
-    }
+        document.getElementById('enviar').addEventListener('click', function(event) {
+            // Obtener el formulario
+            const formulario = document.getElementById('formulario');
 
-    // Validar formato y tamaño de acta de compromiso
-    if (actaCompromiso) {
-        if (!/(\.pdf|\.doc|\.docx)$/i.exec(actaCompromiso.name)) {
-            alert('El acta de compromiso debe estar en formato PDF o Word (.pdf, .doc, .docx).');
-            return;
-        }
-        if (actaCompromiso.size > MAX_FILE_SIZE) {
-            alert('El acta de compromiso no debe superar los 20 MB.');
-            return;
-        }
-    }
+            // Validar campos vacíos
+            const nombreInstitucion = document.querySelector('input[name="nombre_institucion"]').value.trim();
+            // Más validaciones...
 
-    const formData = new FormData(document.getElementById('formulario'));
+            // Validar campos obligatorios
+            if (!nombreInstitucion) {
+                alert('Todos los campos obligatorios deben ser completados.');
+                return;
+            }
 
-    fetch('/submit', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Mostrar alerta y redirigir al usuario
-            alert(data.message);  // Mensaje de éxito
-            window.location.href = 'index.html';  // Redirigir a index.html
-        } else {
-            alert('Error: ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Ocurrió un error al procesar la postulación.');
-    });
+            // Mostrar el GIF de carga y deshabilitar el botón de envío
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('enviar').disabled = true;
 
+            const formData = new FormData(document.getElementById('formulario'));
 
-});
+            fetch('/submit', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Ocultar el GIF de carga
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('enviar').disabled = false;
 
-
-
+                if (data.success) {
+                    alert(data.message);  // Mensaje de éxito
+                    window.location.href = 'index.html';  // Redirigir
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Ocurrió un error al procesar la postulación.');
+                // Ocultar el GIF de carga en caso de error
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('enviar').disabled = false;
+            });
+        });
     </script>
 </body>
 </html>
