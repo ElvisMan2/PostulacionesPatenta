@@ -114,12 +114,14 @@ iframe {
   display: flex;
   flex-direction: column;
   margin-bottom: 40px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .postular{
   max-width: 600px;
   margin: 0 auto;
-  padding: auto 10px;
+
 }
 
 .postular input, .postular select{
