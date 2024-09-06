@@ -17,10 +17,19 @@
         th {
             background-color: #f4f4f4;
         }
+        button {
+            margin-bottom: 15px;
+        }
     </style>
+    <!-- Añadir la biblioteca SheetJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 </head>
 <body>
     <h1>Lista de Postulaciones</h1>
+
+    <!-- Botón para exportar la tabla a Excel -->
+    <button onclick="exportarExcel()">Exportar a Excel</button>
+
     <table id="tabla-postulaciones">
         <thead>
             <tr>
@@ -83,7 +92,7 @@
             obtenerPostulaciones();
         }
 
-        // Función para llenar la tabla (como antes)
+        // Función para llenar la tabla
         function llenarTabla(postulaciones) {
             const tbody = document.querySelector('#tabla-postulaciones tbody');
             tbody.innerHTML = '';  // Limpiar el contenido existente
@@ -112,6 +121,12 @@
             });
         }
 
+        // Función para exportar la tabla a Excel
+        function exportarExcel() {
+            const tabla = document.getElementById('tabla-postulaciones');
+            const workbook = XLSX.utils.table_to_book(tabla, {sheet: "Postulaciones"});
+            XLSX.writeFile(workbook, 'postulaciones.xlsx');
+        }
     </script>
 </body>
 </html>
