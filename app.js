@@ -11,7 +11,8 @@ const app = express();
 const jwt = require('jsonwebtoken');
 
 // Clave secreta para JWT
-const secretKey = '6LdUDjMqAAAAABBnVq8EKW_2tv_xCM4mvrDmxhRV';  // Reemplaza con tu clave secreta de reCAPTCHA
+const jwtSecretKey = 'angelus+diable'; const recaptchaSecretKey = '6LdUDjMqAAAAABBnVq8EKW_2tv_xCM4mvrDmxhRV'; // Clave para reCAPTCHA
+
 
 // Cargar los certificados SSL
 const privateKey = fs.readFileSync('/etc/letsencrypt/live/programapatenta.com/privkey.pem', 'utf8');
@@ -48,7 +49,7 @@ function verifyToken(req, res, next) {
 
     const token = authHeader.split(' ')[1];  // Extraer el token sin el prefijo 'Bearer'
 
-    jwt.verify(token, secretKey, (err, decoded) => {//VERIFICACIÓN DE JWT
+    jwt.verify(token, jwtSecretKey, (err, decoded) => {//VERIFICACIÓN DE JWT
         if (err) {
             return res.status(401).json({ success: false, message: 'Token inválido' });
         }
@@ -109,7 +110,7 @@ app.post('/login', (req, res) => {
         if (result.length > 0) {
             const user = result[0];
             if (user.contrasena === contrasena) { // Generar el JWT usando la misma clave secreta
-                const token = jwt.sign({ id: user.id, usuario: user.usuario }, secretKey, {//JWT
+                const token = jwt.sign({ id: user.id, usuario: user.usuario }, jwtSecretKey, {//JWT
                     expiresIn: '1h',  // Token válido por 1 hora
                 });
                 return res.json({ success: true, token });
@@ -139,6 +140,8 @@ app.post('/registro', (req, res) => {
 });
 
 // Endpoint para subir archivos
+const axios = require('axios'); // Asegúrate de tener axios instalado
+
 app.post('/submit', upload.fields([
     { name: 'ficha_postulante', maxCount: 1 },
     { name: 'ficha_invencion', maxCount: 1 },
@@ -146,16 +149,33 @@ app.post('/submit', upload.fields([
 ]), (req, res) => {
     const { tipo_participante, nombre_institucion, titulo_invencion, sector_tecnologico, apellidos_representante, nombres_representante, dni_representante, correo_electronico, region, recaptcha_token } = req.body;
 
-    const ficha_postulante = req.files['ficha_postulante'] ? req.files['ficha_postulante'][0].path : null;
-    const ficha_invencion = req.files['ficha_invencion'] ? req.files['ficha_invencion'][0].path : null;
-    const acta_compromiso = req.files['acta_compromiso'] ? req.files['acta_compromiso'][0].path : null;
+    // Verificación de reCAPTCHA
+    const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${recaptchaSecretKey}&response=${recaptcha_token}`;
+    
+    // Realiza la solicitud a la API de Google reCAPTCHA
+    axios.post(verifyUrl)
+        .then(response => {
+            if (response.data.success) {
+                // Si reCAPTCHA es válido, continuar con la inserción en la base de datos
+                const ficha_postulante = req.files['ficha_postulante'] ? req.files['ficha_postulante'][0].path : null;
+                const ficha_invencion = req.files['ficha_invencion'] ? req.files['ficha_invencion'][0].path : null;
+                const acta_compromiso = req.files['acta_compromiso'] ? req.files['acta_compromiso'][0].path : null;
 
-    const query = 'INSERT INTO postulaciones (tipo_participante, nombre_institucion, titulo_invencion, sector_tecnologico, apellidos_representante, nombres_representante, dni_representante, correo_electronico, region, ficha_postulante, ficha_invencion, acta_compromiso, fecha_creacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())';
+                const query = 'INSERT INTO postulaciones (tipo_participante, nombre_institucion, titulo_invencion, sector_tecnologico, apellidos_representante, nombres_representante, dni_representante, correo_electronico, region, ficha_postulante, ficha_invencion, acta_compromiso, fecha_creacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())';
 
-    db.query(query, [tipo_participante, nombre_institucion, titulo_invencion, sector_tecnologico, apellidos_representante, nombres_representante, dni_representante, correo_electronico, region, ficha_postulante, ficha_invencion, acta_compromiso], (err, result) => {
-        if (err) throw err;
-        res.json({ success: true, message: 'Postulación ingresada' });
-    });
+                db.query(query, [tipo_participante, nombre_institucion, titulo_invencion, sector_tecnologico, apellidos_representante, nombres_representante, dni_representante, correo_electronico, region, ficha_postulante, ficha_invencion, acta_compromiso], (err, result) => {
+                    if (err) throw err;
+                    res.json({ success: true, message: 'Postulación ingresada' });
+                });
+            } else {
+                // Si reCAPTCHA falla
+                res.status(400).json({ success: false, message: 'Verificación de reCAPTCHA fallida' });
+            }
+        })
+        .catch(error => {
+            console.error('Error al verificar reCAPTCHA:', error);
+            res.status(500).json({ success: false, message: 'Error en la verificación de reCAPTCHA' });
+        });
 });
 
 // Endpoint para obtener un archivo
