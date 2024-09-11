@@ -123,20 +123,20 @@ app.post('/login', (req, res) => {
 });
 
 // Endpoint para registro
-app.post('/registro', (req, res) => {
-    console.log('Datos recibidos:', req.body);
-    const { usuario, contrasena, nombre_completo, email } = req.body;
+//app.post('/registro', (req, res) => {
+    //console.log('Datos recibidos:', req.body);
+    //const { usuario, contrasena, nombre_completo, email } = req.body;
     
-    const query = 'INSERT INTO usuarios (usuario, contrasena, nombre_completo, email) VALUES (?, ?, ?, ?)';
+    //const query = 'INSERT INTO usuarios (usuario, contrasena, nombre_completo, email) VALUES (?, ?, ?, ?)';
 
-    db.query(query, [usuario, contrasena, nombre_completo, email], (err, result) => {
-        if (err) {
-            console.error('Error en la consulta:', err);  // Log del error en el servidor
-            return res.status(500).json({ success: false, message: 'Error en el servidor' });  // Enviar un JSON en caso de error
-        }
-        res.json({ success: true });
-    });
-});
+    //db.query(query, [usuario, contrasena, nombre_completo, email], (err, result) => {
+        //if (err) {
+          //  console.error('Error en la consulta:', err);  // Log del error en el servidor
+        //    return res.status(500).json({ success: false, message: 'Error en el servidor' });  // Enviar un JSON en caso de error
+      //  }
+    //    res.json({ success: true });
+  //  });
+//});
 
 // Endpoint para subir archivos
 app.post('/submit', upload.fields([
