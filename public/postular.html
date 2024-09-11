@@ -90,7 +90,10 @@
             <input type="file" name="acta_compromiso">
             <div class="g-recaptcha" data-sitekey="6LdUDjMqAAAAAM8e2XjbRjgOUrYPhFBJjBYtcErg" data-callback="captchaCompleted"></div>
             <!-- Campo oculto para almacenar el token de reCAPTCHA -->
-            <input type="hidden" id="recaptcha_token" name="recaptcha_token">
+            <input type="hidden" id="recaptcha_token" name="recaptcha_token"><br>
+            <div>
+                <p id="mensaje-usuario"></p>
+            </div>
             <button id="enviar" type="button">Enviar</button>
         </form>
     </main>
@@ -103,6 +106,10 @@
     }
 
     document.getElementById('enviar').addEventListener('click', function(event) {
+    
+    //mostrando mensaje
+    document.getElementById('mensaje-usuario').innerText="Enviando su postulación..."
+
     // Obtener el formulario
     const formulario = document.getElementById('formulario');
 
@@ -184,6 +191,7 @@ if (fichaPostulante) {
     .then(data => {
         if (data.success) {
             // Mostrar alerta y redirigir al usuario
+            document.getElementById('mensaje-usuario').innerText=""
             alert(data.message);  // Mensaje de éxito
             window.location.href = 'index.html';  // Redirigir a index.html
         } else {

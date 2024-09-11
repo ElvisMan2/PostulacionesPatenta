@@ -168,3 +168,10 @@ iframe {
 .footer p{
   text-align: center;
 }
+
+
+
+#mensaje-usuario{
+  color: red;
+  font-weight: bold;
+}
