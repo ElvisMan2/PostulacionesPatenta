@@ -65,28 +65,33 @@
         } else {
             // Función para obtener las postulaciones
             function obtenerPostulaciones() {
-                fetch('/postulaciones', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': 'Bearer ' + token
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        llenarTabla(data.data);
-                    } else {
-                        alert('Error: ' + data.message);
-                        // Si el token es inválido o expiró, redirigir al login
-                        if (data.message === 'Token inválido' || data.message === 'Token no proporcionado') {
-                            window.location.href = 'login.html';
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error al obtener las postulaciones:', error);
-                });
+    fetch('/postulaciones', {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + token
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (data.data.length === 0) {  // Verificar si el array está vacío
+                alert('No hay postulaciones disponibles.');
+                limpiarTabla();  // Opcionalmente, limpiar cualquier contenido anterior en la tabla
+            } else {
+                llenarTabla(data.data);
             }
+        } else {
+            alert('Error: ' + data.message);
+            // Si el token es inválido o expiró, redirigir al login
+            if (data.message === 'Token inválido' || data.message === 'Token no proporcionado') {
+                window.location.href = 'login.html';
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error al obtener las postulaciones:', error);
+    });
+}
 
             // Llamar a la función para obtener los datos
             obtenerPostulaciones();
@@ -94,32 +99,32 @@
 
         // Función para llenar la tabla
         function llenarTabla(postulaciones) {
-            const tbody = document.querySelector('#tabla-postulaciones tbody');
-            tbody.innerHTML = '';  // Limpiar el contenido existente
+    const tbody = document.querySelector('#tabla-postulaciones tbody');
+    tbody.innerHTML = '';  // Limpiar el contenido existente
 
-            postulaciones.forEach(postulacion => {
-                const fila = document.createElement('tr');
+    postulaciones.forEach(postulacion => {
+        const fila = document.createElement('tr');
 
-                fila.innerHTML = `
-                    <td>${postulacion.id}</td>
-                    <td>${postulacion.tipo_participante}</td>
-                    <td>${postulacion.nombre_institucion}</td>
-                    <td>${postulacion.titulo_invencion}</td>
-                    <td>${postulacion.sector_tecnologico}</td>
-                    <td>${postulacion.apellidos_representante}</td>
-                    <td>${postulacion.nombres_representante}</td>
-                    <td>${postulacion.dni_representante}</td>
-                    <td>${postulacion.correo_electronico}</td>
-                    <td>${postulacion.region}</td>
-                    <td>${postulacion.ficha_postulante ? `<a href="/${postulacion.ficha_postulante}" target="_blank">Ver Ficha</a>` : 'No disponible'}</td>
-                    <td>${postulacion.ficha_invencion ? `<a href="/${postulacion.ficha_invencion}" target="_blank">Ver Ficha</a>` : 'No disponible'}</td>
-                    <td>${postulacion.acta_compromiso ? `<a href="/${postulacion.acta_compromiso}" target="_blank">Ver Acta</a>` : 'No disponible'}</td>
-                    <td>${new Date(postulacion.fecha_creacion).toLocaleDateString()}</td>
-                `;
+        fila.innerHTML = `
+            <td>${postulacion.id}</td>
+            <td>${postulacion.tipo_participante}</td>
+            <td>${postulacion.nombre_institucion}</td>
+            <td>${postulacion.titulo_invencion}</td>
+            <td>${postulacion.sector_tecnologico}</td>
+            <td>${postulacion.apellidos_representante}</td>
+            <td>${postulacion.nombres_representante}</td>
+            <td>${postulacion.dni_representante}</td>
+            <td>${postulacion.correo_electronico}</td>
+            <td>${postulacion.region}</td>
+            <td>${postulacion.ficha_postulante ? `<a href="/${postulacion.ficha_postulante}" target="_blank">Ver Ficha</a>` : 'No disponible'}</td>
+            <td>${postulacion.ficha_invencion ? `<a href="/${postulacion.ficha_invencion}" target="_blank">Ver Ficha</a>` : 'No disponible'}</td>
+            <td>${postulacion.acta_compromiso ? `<a href="/${postulacion.acta_compromiso}" target="_blank">Ver Acta</a>` : 'No disponible'}</td>
+            <td>${new Date(postulacion.fecha_creacion).toLocaleDateString()}</td>
+        `;
 
-                tbody.appendChild(fila);
-            });
-        }
+        tbody.appendChild(fila);
+    });
+}
 
         // Función para exportar la tabla a Excel
         function exportarExcel() {
