@@ -38,6 +38,7 @@ httpsServer.listen(443, () => {
   console.log('Servidor HTTPS corriendo en el puerto 443');
 });
 
+
 // Middleware para verificar el token JWT
 function verifyToken(req, res, next) {
     const authHeader = req.headers['authorization'];
@@ -47,7 +48,7 @@ function verifyToken(req, res, next) {
 
     const token = authHeader.split(' ')[1];  // Extraer el token sin el prefijo 'Bearer'
 
-    jwt.verify(token, secretKey, (err, decoded) => {
+    jwt.verify(token, secretKey, (err, decoded) => {//VERIFICACIÓN DE JWT
         if (err) {
             return res.status(401).json({ success: false, message: 'Token inválido' });
         }
@@ -70,44 +71,45 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Crear un pool de conexiones en lugar de una única conexión
-const pool = mysql.createPool({
+// Conexión a la base de datos
+const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '12348765',
-    database: 'programa_patenta',
-    waitForConnections: true,
-    connectionLimit: 10,  // Número máximo de conexiones simultáneas en el pool
-    queueLimit: 0         // Sin límite de espera en la cola
+    database: 'programa_patenta'
 });
 
-// Usar el pool con promesas
-const db = pool.promise();
+db.connect((err) => {
+    if (err) throw err;
+    console.log('Conectado a la base de datos');
+});
 
 // Configurar el middleware para servir archivos estáticos
 app.use(express.static('public'));
 
 // Endpoint protegido para obtener los datos de la tabla postulaciones
-app.get('/postulaciones', verifyToken, async (req, res) => {
-    try {
-        const [results] = await db.query('SELECT * FROM postulaciones');
+app.get('/postulaciones', verifyToken, (req, res) => {
+    const query = 'SELECT * FROM postulaciones';
+
+    db.query(query, (err, results) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Error al obtener los datos' });
+        }
         res.json({ success: true, data: results });
-    } catch (err) {
-        return res.status(500).json({ success: false, message: 'Error al obtener los datos' });
-    }
+    });
 });
 
-// Endpoint para login
-app.post('/login', async (req, res) => {
+//endpoint para login
+app.post('/login', (req, res) => {
     const { usuario, contrasena } = req.body;
     const query = 'SELECT * FROM usuarios WHERE usuario = ?';
 
-    try {
-        const [result] = await db.query(query, [usuario]);
+    db.query(query, [usuario], (err, result) => {
+        if (err) throw err;
         if (result.length > 0) {
             const user = result[0];
             if (user.contrasena === contrasena) { // Generar el JWT usando la misma clave secreta
-                const token = jwt.sign({ id: user.id, usuario: user.usuario }, secretKey, {
+                const token = jwt.sign({ id: user.id, usuario: user.usuario }, secretKey, {//JWT
                     expiresIn: '1h',  // Token válido por 1 hora
                 });
                 return res.json({ success: true, token });
@@ -117,17 +119,31 @@ app.post('/login', async (req, res) => {
         } else {
             return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
         }
-    } catch (err) {
-        return res.status(500).json({ success: false, message: 'Error en el servidor' });
-    }
+    });
 });
+
+// Endpoint para registro
+//app.post('/registro', (req, res) => {
+    //console.log('Datos recibidos:', req.body);
+    //const { usuario, contrasena, nombre_completo, email } = req.body;
+    
+    //const query = 'INSERT INTO usuarios (usuario, contrasena, nombre_completo, email) VALUES (?, ?, ?, ?)';
+
+    //db.query(query, [usuario, contrasena, nombre_completo, email], (err, result) => {
+        //if (err) {
+          //  console.error('Error en la consulta:', err);  // Log del error en el servidor
+        //    return res.status(500).json({ success: false, message: 'Error en el servidor' });  // Enviar un JSON en caso de error
+      //  }
+    //    res.json({ success: true });
+  //  });
+//});
 
 // Endpoint para subir archivos
 app.post('/submit', upload.fields([
     { name: 'ficha_postulante', maxCount: 1 },
     { name: 'ficha_invencion', maxCount: 1 },
     { name: 'acta_compromiso', maxCount: 1 }
-]), async (req, res) => {
+]), (req, res) => {
     const { tipo_participante, nombre_institucion, titulo_invencion, sector_tecnologico, apellidos_representante, nombres_representante, dni_representante, correo_electronico, region, recaptcha_token } = req.body;
 
     const ficha_postulante = req.files['ficha_postulante'] ? req.files['ficha_postulante'][0].path : null;
@@ -136,12 +152,10 @@ app.post('/submit', upload.fields([
 
     const query = 'INSERT INTO postulaciones (tipo_participante, nombre_institucion, titulo_invencion, sector_tecnologico, apellidos_representante, nombres_representante, dni_representante, correo_electronico, region, ficha_postulante, ficha_invencion, acta_compromiso, fecha_creacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())';
 
-    try {
-        await db.query(query, [tipo_participante, nombre_institucion, titulo_invencion, sector_tecnologico, apellidos_representante, nombres_representante, dni_representante, correo_electronico, region, ficha_postulante, ficha_invencion, acta_compromiso]);
+    db.query(query, [tipo_participante, nombre_institucion, titulo_invencion, sector_tecnologico, apellidos_representante, nombres_representante, dni_representante, correo_electronico, region, ficha_postulante, ficha_invencion, acta_compromiso], (err, result) => {
+        if (err) throw err;
         res.json({ success: true, message: 'Postulación ingresada' });
-    } catch (err) {
-        return res.status(500).json({ success: false, message: 'Error en el servidor' });
-    }
+    });
 });
 
 // Endpoint para obtener un archivo
