@@ -192,8 +192,7 @@ if (fichaPostulante) {
     .then(data => {
         if (data.success) {
             // Mostrar alerta y redirigir al usuario
-            document.getElementById('mensaje-usuario').innerText=""
-            document.getElementById("enviar").disabled = false;
+            document.getElementById('mensaje-usuario').innerText="";
 
             alert(data.message);  // Mensaje de éxito
             window.location.href = 'index.html';  // Redirigir a index.html
