@@ -181,7 +181,7 @@ if (fichaPostulante) {
     const formData = new FormData(document.getElementById('formulario'));
 
     //mostrando mensaje
-    document.getElementById('mensaje-usuario').innerText="Enviando su postulación..."
+    document.getElementById('mensaje-usuario').innerText="Espere ..."
     document.getElementById("enviar").disabled = true;
 
     fetch('/submit', {
