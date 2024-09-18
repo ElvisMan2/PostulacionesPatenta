@@ -98,7 +98,7 @@
         </form>
     </main>
     <script>
-        function captchaCompleted(token) {
+    function captchaCompleted(token) {
         // Guardar el token de reCAPTCHA en el campo oculto
         document.getElementById('recaptcha_token').value = token;
         // Mostrar el botón de enviar
@@ -106,9 +106,6 @@
     }
 
     document.getElementById('enviar').addEventListener('click', function(event) {
-    
-    //mostrando mensaje
-    document.getElementById('mensaje-usuario').innerText="Enviando su postulación..."
 
     // Obtener el formulario
     const formulario = document.getElementById('formulario');
@@ -183,6 +180,10 @@ if (fichaPostulante) {
 
     const formData = new FormData(document.getElementById('formulario'));
 
+    //mostrando mensaje
+    document.getElementById('mensaje-usuario').innerText="Enviando su postulación..."
+    document.getElementById("enviar").disabled = true;
+
     fetch('/submit', {
         method: 'POST',
         body: formData
@@ -192,6 +193,8 @@ if (fichaPostulante) {
         if (data.success) {
             // Mostrar alerta y redirigir al usuario
             document.getElementById('mensaje-usuario').innerText=""
+            document.getElementById("enviar").disabled = false;
+
             alert(data.message);  // Mensaje de éxito
             window.location.href = 'index.html';  // Redirigir a index.html
         } else {
